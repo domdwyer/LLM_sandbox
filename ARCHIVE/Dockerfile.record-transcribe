@@ -1,0 +1,41 @@
+FROM python:3.8-slim
+
+# Prevent Python from writing .pyc files; turn off buffering
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# 1. Install OS dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3-distutils \
+    python3-setuptools \
+    python3-tk \
+    build-essential \
+    python3-dev \
+    gfortran \
+    portaudio19-dev \
+    curl \
+    libatlas-base-dev \
+    libopenblas-dev \
+    liblapack-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. Install latest stable Rust with rustup
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Optional debug: confirm Rust version
+RUN rustc --version  # should show at least 1.65
+
+# 3. Copy and install dependencies
+COPY requirements_docker_minimal.txt .
+RUN python -m pip install --upgrade pip setuptools wheel
+RUN python -m pip install -r requirements_docker_minimal.txt
+
+WORKDIR /app
+COPY . /app
+
+# 4. Non-root user
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
+
+CMD ["python", "speech_recording+analysis.py"]

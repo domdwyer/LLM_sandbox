@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  llmsandbox:
+    image: llmsandbox
+    build:
+      context: .
+      dockerfile: ./Dockerfile

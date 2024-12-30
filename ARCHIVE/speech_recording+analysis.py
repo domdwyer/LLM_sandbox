@@ -84,7 +84,7 @@ def transcribe_audio():
             return None
 
 def summarize_text(text):
-    summarizer = pipeline("summarization", model='sshleifer/distilbart-cnn-12-6', device=0)
+    summarizer = pipeline("summarization", model='sshleifer/distilbart-cnn-12-6', device=-1)
     # Adjust max_length and min_length based on the length of the input text
     input_length = len(text.split())
     max_length = min(50, input_length // 2)
@@ -97,7 +97,7 @@ def summarize_text(text):
     print("Summary: " + summary[0]['summary_text'])
 
 def sentiment_analysis(text):
-    classifier = pipeline("sentiment-analysis", model='distilbert-base-uncased-finetuned-sst-2-english', device=0)
+    classifier = pipeline("sentiment-analysis", model='distilbert-base-uncased-finetuned-sst-2-english', device=-1)
     result = classifier(text)
     print("Sentiment: " + result[0]['label'])
 

@@ -1,0 +1,1 @@
+ There's a script just to test out the recording function, saving it into outputs. That's what it all is.
