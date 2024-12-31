@@ -1,0 +1,36 @@
+stages:
+  - build
+  - test
+  - deploy
+
+services:
+  - docker:dind  # Docker-in-Docker to enable building and running containers
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+
+before_script:
+  # Install Docker Compose in the runner
+  - apk add --no-cache docker-compose
+
+build:
+  stage: build
+  script:
+    - docker-compose build  # Build the app and test services
+  only:
+    - main  # Run this stage only on the main branch
+
+test:
+  stage: test
+  script:
+    - docker-compose run test  # Run Pytest in the test service
+  only:
+    - merge_requests  # Run tests on merge requests
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deployment stage placeholder"
+  only:
+    - tags  # Deploy only when a tag is pushed
